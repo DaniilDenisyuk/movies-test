@@ -1,0 +1,2 @@
+CREATE USER odmen WITH PASSWORD 'qwerty';
+CREATE DATABASE Movies OWNER odmen;
