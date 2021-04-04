@@ -5,6 +5,7 @@ const filmsAT = {
   DELETE_FILM: "FILMS_DELETE_FILM",
   FILMS_FAILED: "FILMS_FAILED",
   SET_SORTING: "FILMS_SET_SORTING",
+  SET_ORDER: "FILMS_SET_ORDER",
 };
 
 export default filmsAT;

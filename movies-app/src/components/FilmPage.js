@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { connect } from "react-redux";
 import FilmLI from "./FilmLI";
-import { testFilms } from "../shared/testFilms";
+import FilmForm from "./FilmFormModal";
 
 import { useState, useEffect } from "react";
 
@@ -9,7 +9,11 @@ import {
   fetchFilms,
   postFilm,
   postFilmsFile,
+  setOrder,
+  setSorting,
 } from "../redux/actionCreators/films";
+
+import { sortFilms } from "../redux/selectors";
 
 const FilmList = ({ className, films }) => {
   const filmItems = films.map((film, i) => (
@@ -24,18 +28,18 @@ const FilmList = ({ className, films }) => {
   return <ul className={cn(className, "film-list")}>{filmItems}</ul>;
 };
 
-const sortByYear = (asc, a, b) => {
-  if (asc) {
+const sortByYear = (order) => (a, b) => {
+  if (order === "ASC") {
     return a.year - b.year;
   } else {
     return b.year - a.year;
   }
 };
 
-const sortByName = (asc, a, b) => {
-  const aName = a.name.toUpperCase();
-  const bName = b.name.toUpperCase();
-  if (asc === true) {
+const sortByTitle = (order) => (a, b) => {
+  const aName = a.title.toUpperCase();
+  const bName = b.title.toUpperCase();
+  if (order === "ASC") {
     if (aName < bName) {
       return -1;
     }
@@ -54,39 +58,12 @@ const sortByName = (asc, a, b) => {
 };
 
 const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
-  const [sorting, setSorting] = useState(null);
   const [fileChosen, setFileChosen] = useState(false);
   const [formOpened, setFormOpened] = useState(false);
-  const [filmForm, setFilmForm] = useState({
-    title: {
-      isPristine: true,
-      isValid: true,
-      value: "",
-    },
-    year: {
-      isPristine: true,
-      isValid: true,
-      value: "",
-    },
-    format: {
-      isPristine: true,
-      isValid: true,
-      value: "",
-    },
-    stars: {
-      isPristine: true,
-      isValid: true,
-      value: "",
-    },
-  });
 
-  if (sorting) {
-    films.sort(sorting);
-  }
-
-  // useEffect(() => {
-  //   fetchFilms();
-  // }, []);
+  useEffect(() => {
+    fetchFilms();
+  }, [fetchFilms]);
 
   const handleSubmit = (e) => {
     postFilm();
@@ -97,15 +74,10 @@ const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
     <div className="films">
       <section className="films__list list">
         <h3 className="list__heading">Список фильмов: </h3>
-        {films && films.length ? (
-          <FilmList films={films} className="list__list" />
-        ) : (
-          "Фильмов ещё нету"
-        )}
         <div className="list__sorting sorting">
           <button
             className="sorting__name"
-            onClick={() => setSorting(sortByName)}
+            onClick={() => setSorting(sortByTitle)}
           >
             По алфавиту
           </button>
@@ -116,53 +88,22 @@ const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
           >
             По годам
           </button>
-          <button
-            className="sorting__asc"
-            onClick={() => setSorting(sorting.bind(null, true))}
-          >
+          <button className="sorting__asc" onClick={() => setOrder("ASC")}>
             &uarr;
           </button>
-          <button
-            className="sorting__desc"
-            onClick={() => setSorting(sorting.bind(null, false))}
-          >
+          <button className="sorting__desc" onClick={() => setOrder("DESC")}>
             &darr;
           </button>
         </div>
+
+        {films && films.length ? (
+          <FilmList films={films} className="list__list" />
+        ) : (
+          "Фильмов ещё нету"
+        )}
       </section>
       {formOpened && (
-        <div className="films__film-modal film-modal">
-          <form onSubmit={handleSubmit} className="film-modal__form">
-            <p className="film-modal__heading">
-              Заполните форму,
-              <br />
-              что бы добавить фильм
-            </p>
-            <input
-              type="text"
-              placeholder="Название"
-              className="film-modal__input"
-            />
-            <input
-              type="number"
-              placeholder="Год выпуска"
-              className="film-modal__input"
-            />
-            <input
-              type="text"
-              placeholder="Формат"
-              className="film-modal__input"
-            />
-            <input
-              type="text"
-              placeholder="Актёры"
-              className="film-modal__input"
-            />
-            <button type="submit" className="film-modal__submit">
-              Подтвердить
-            </button>
-          </form>
-        </div>
+        <FilmForm className="films__film-modal" handleSubmit={handleSubmit} />
       )}
       <div className="row">
         <button className="films__add-film" onClick={() => setFormOpened(true)}>
@@ -191,11 +132,17 @@ const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
   );
 };
 
-const mapState = (state) => ({ films: state.films });
+const mapState = (state) => {
+  const { sorting, order } = state;
+  const films = sortFilms(state, sorting, order);
+  return { films };
+};
 const mapDispatch = {
   fetchFilms,
   postFilm,
   postFilmsFile,
+  setOrder,
+  setSorting,
 };
 
 export default connect(mapState, mapDispatch)(FilmPage);

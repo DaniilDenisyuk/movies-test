@@ -117,12 +117,48 @@ export const addFilms = (films) => ({
   payload: { films },
 });
 
+export const removeFilm = (id) => (dispatch) => {
+  return fetch(APIURL + `films/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "same-origin",
+  })
+    .then(
+      (response) => {
+        if (response.ok) {
+          return response;
+        } else {
+          var error = new Error(
+            "Error " + response.status + ": " + response.statusText
+          );
+          error.response = response;
+          throw error;
+        }
+      },
+      (error) => {
+        throw error;
+      }
+    )
+    .then((remId) => dispatch(deleteFilm(remId)))
+    .catch((error) => {
+      console.log("delete film", error.message);
+      alert("Film could not be deleted\nError: " + error.message);
+    });
+};
+
 export const deleteFilm = (id) => ({
   type: filmsAT.DELETE_FILM,
   payload: { id },
 });
 
-// export const setSorting = (sortBy) => ({
-//   type: filmsAT.SET_SORTING,
-//   payload: { sortBy },
-// });
+export const setSorting = (sortFunc) => ({
+  type: filmsAT.SET_SORTING,
+  payload: { sortFunc },
+});
+
+export const setOrder = (order) => ({
+  type: filmsAT.SET_ORDER,
+  payload: { order },
+});
