@@ -14,7 +14,7 @@ const FilmFormModal = ({ className, handleSubmit, handleClose }) => {
   const [format, setFormat] = useState({
     isPristine: true,
     isValid: false,
-    validations: [required, number],
+    validations: [required],
     value: "",
   });
   const [stars, setStars] = useState({
@@ -26,7 +26,7 @@ const FilmFormModal = ({ className, handleSubmit, handleClose }) => {
   const [year, setYear] = useState({
     isPristine: true,
     isValid: false,
-    validations: [required],
+    validations: [required, number],
     value: "",
   });
   const handleFormSubmit = (e) => {
