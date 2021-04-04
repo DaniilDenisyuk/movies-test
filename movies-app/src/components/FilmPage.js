@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import FilmLI from "./FilmLI";
 import FilmForm from "./FilmFormModal";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import {
   fetchFilms,
@@ -57,13 +57,24 @@ const sortByTitle = (order) => (a, b) => {
   return 0;
 };
 
-const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
+const FilmPage = ({
+  films,
+  isLoading,
+  fetchFilms,
+  postFilm,
+  postFilmsFile,
+  setOrder,
+  setSorting,
+}) => {
   const [fileChosen, setFileChosen] = useState(false);
   const [formOpened, setFormOpened] = useState(false);
+  const modalRef = useRef();
 
   useEffect(() => {
     fetchFilms();
   }, [fetchFilms]);
+
+  const closeForm = () => setFormOpened(false);
 
   const handleSubmit = (e) => {
     postFilm();
@@ -72,38 +83,45 @@ const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
 
   return (
     <div className="films">
-      <section className="films__list list">
-        <h3 className="list__heading">Список фильмов: </h3>
-        <div className="list__sorting sorting">
-          <button
-            className="sorting__name"
-            onClick={() => setSorting(sortByTitle)}
-          >
-            По алфавиту
-          </button>
-          <button
-            className="sorting__year"
-            value=""
-            onClick={() => setSorting(sortByYear)}
-          >
-            По годам
-          </button>
-          <button className="sorting__asc" onClick={() => setOrder("ASC")}>
-            &uarr;
-          </button>
-          <button className="sorting__desc" onClick={() => setOrder("DESC")}>
-            &darr;
-          </button>
-        </div>
-
-        {films && films.length ? (
+      {isLoading ? (
+        "идет загрузка..."
+      ) : films && films.length ? (
+        <section className="films__list list">
+          <h3 className="list__heading">Список фильмов: </h3>
+          <div className="list__sorting sorting">
+            <button
+              className="sorting__name"
+              onClick={() => setSorting(sortByTitle)}
+            >
+              По алфавиту
+            </button>
+            <button
+              className="sorting__year"
+              value=""
+              onClick={() => setSorting(sortByYear)}
+            >
+              По годам
+            </button>
+            <button className="sorting__asc" onClick={() => setOrder("ASC")}>
+              &uarr;
+            </button>
+            <button className="sorting__desc" onClick={() => setOrder("DESC")}>
+              &darr;
+            </button>
+          </div>
           <FilmList films={films} className="list__list" />
-        ) : (
-          "Фильмов ещё нету"
-        )}
-      </section>
+        </section>
+      ) : (
+        "Фильмов ещё нету"
+      )}
       {formOpened && (
-        <FilmForm className="films__film-modal" handleSubmit={handleSubmit} />
+        <div ref={modalRef}>
+          <FilmForm
+            className="films__film-modal"
+            handleClose={closeForm}
+            handleSubmit={handleSubmit}
+          />
+        </div>
       )}
       <div className="row">
         <button className="films__add-film" onClick={() => setFormOpened(true)}>
@@ -116,7 +134,7 @@ const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
               type="file"
               accept=".txt"
               onChange={(e) => {
-                setFileChosen(e.target.uploadFile.files[0]);
+                setFileChosen(e.target.files[0]);
               }}
             />
             Загрузить фильмы с файла
@@ -133,10 +151,11 @@ const FilmPage = ({ films, fetchFilms, postFilm, postFilmsFile }) => {
 };
 
 const mapState = (state) => {
-  const { sorting, order } = state;
+  const { sorting, order } = state.films;
   const films = sortFilms(state, sorting, order);
-  return { films };
+  return { films, order, sorting, isLoading: state.films.isLoading };
 };
+
 const mapDispatch = {
   fetchFilms,
   postFilm,

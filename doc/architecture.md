@@ -5,6 +5,8 @@ Folder structure:
 3. dbAPI. Database interaction functions.
 4. doc. Infromation for app understanding
 5. movies-app. React frontend.
+   *components: main components
+   *redux: redux components
 6. restApi. Rest Api express.js server.
 7. test. Application tests.
 8. utils. Useful functions.

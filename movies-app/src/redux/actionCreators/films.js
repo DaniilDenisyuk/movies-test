@@ -1,5 +1,6 @@
 import filmsAT from "../actionTypes/films";
 import { APIURL } from "../../shared/apiUrl";
+import { testFilms } from "../../shared/testFilms";
 
 export const addFilm = (film) => ({
   type: filmsAT.ADD_FILM,
@@ -7,8 +8,8 @@ export const addFilm = (film) => ({
 });
 
 export const fetchFilms = () => (dispatch) => {
-  dispatch(filmsLoading());
-
+  //dispatch(filmsLoading());
+  return dispatch(addFilms(testFilms));
   return fetch(APIURL + "films")
     .then(
       (response) => {
@@ -40,7 +41,7 @@ export const filmsFailed = (errmess) => ({
   payload: errmess,
 });
 
-export const postFilm = ({ title, year, format, stars }) => (dispatch) => {
+export const postFilm = (title, year, format, stars) => (dispatch) => {
   const newFilm = {
     title,
     year,
@@ -107,13 +108,13 @@ export const postFilmsFile = (file) => (dispatch) => {
     .then((response) => response.json())
     .then((response) => dispatch(addFilms(response)))
     .catch((error) => {
-      console.log("post comments", error.message);
+      console.log("post film file", error.message);
       alert("Your comment could not be posted\nError: " + error.message);
     });
 };
 
 export const addFilms = (films) => ({
-  type: filmsAT.ADD_FILM,
+  type: filmsAT.ADD_FILMS,
   payload: { films },
 });
 
