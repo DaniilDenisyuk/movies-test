@@ -8,7 +8,7 @@ const films = (state = [], action) => {
     }
     case filmsAT.ADD_FILMS: {
       const { films } = action.payload;
-      return state.concat(films);
+      return films;
     }
     case filmsAT.DELETE_FILM: {
       const { id } = action.payload;
