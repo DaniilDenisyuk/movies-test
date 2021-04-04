@@ -40,18 +40,12 @@ export const filmsFailed = (errmess) => ({
   type: filmsAT.FILMS_FAILED,
   payload: errmess,
 });
-
-export const postFilm = (title, year, format, stars) => (dispatch) => {
-  const newFilm = {
-    title,
-    year,
-    format,
-    stars,
-  };
-
+let a = 100;
+export const postFilm = (film) => (dispatch) => {
+  return dispatch(addFilm({ ...film, id: ++a }));
   return fetch(APIURL + "films", {
     method: "POST",
-    body: JSON.stringify(newFilm),
+    body: JSON.stringify(film),
     headers: {
       "Content-Type": "application/json",
     },

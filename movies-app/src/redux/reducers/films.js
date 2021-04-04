@@ -11,6 +11,7 @@ const films = (state = initialState, action) => {
   switch (action.type) {
     case filmsAT.ADD_FILM: {
       const { film } = action.payload;
+      console.log(film);
       return {
         ...state,
         isLoading: false,

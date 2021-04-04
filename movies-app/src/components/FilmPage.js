@@ -76,8 +76,8 @@ const FilmPage = ({
 
   const closeForm = () => setFormOpened(false);
 
-  const handleSubmit = (e) => {
-    postFilm();
+  const handleSubmit = (title, year, format, value) => {
+    postFilm({ title, year, format, value });
     setFormOpened(false);
   };
 

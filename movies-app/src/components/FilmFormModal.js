@@ -14,13 +14,13 @@ const FilmFormModal = ({ className, handleSubmit, handleClose }) => {
   const [format, setFormat] = useState({
     isPristine: true,
     isValid: false,
-    validations: [required],
+    validations: [required, number],
     value: "",
   });
   const [stars, setStars] = useState({
     isPristine: true,
     isValid: false,
-    validations: [required, number],
+    validations: [required],
     value: "",
   });
   const [year, setYear] = useState({
@@ -47,7 +47,7 @@ const FilmFormModal = ({ className, handleSubmit, handleClose }) => {
   };
   const checkValueValidity = (value, validations) => {
     for (const validation of validations) {
-      if (validation) {
+      if (validation(value, "errorHere")) {
         return false;
       }
     }
@@ -73,59 +73,68 @@ const FilmFormModal = ({ className, handleSubmit, handleClose }) => {
           type="text"
           placeholder="Название"
           className={cn("film-modal__input", {
-            invalid: !title.pristine && !title.isValid,
+            invalid: !title.isPristine && !title.isValid,
           })}
           onChange={(e) => {
             title.value = e.target.value;
           }}
           onBlur={() => {
             title.isPristine = false;
-            title.isValid = checkValueValidity(title.value, title.validations);
+            setTitle({
+              ...title,
+              isValid: checkValueValidity(title.value, title.validations),
+            });
           }}
         />
         <input
-          type="number"
+          type="text"
           placeholder="Год выпуска"
           className={cn("film-modal__input", {
-            invalid: !year.pristine && !year.isValid,
+            invalid: !year.isPristine && !year.isValid,
           })}
           onChange={(e) => {
             year.value = e.target.value;
           }}
           onBlur={() => {
             year.isPristine = false;
-            year.isValid = checkValueValidity(year.value, year.validations);
+            setYear({
+              ...year,
+              isValid: checkValueValidity(year.value, year.validations),
+            });
           }}
         />
         <input
           type="text"
           placeholder="Формат"
           className={cn("film-modal__input", {
-            invalid: !format.pristine && !format.isValid,
+            invalid: !format.isPristine && !format.isValid,
           })}
           onChange={(e) => {
             format.value = e.target.value;
           }}
           onBlur={() => {
             format.isPristine = false;
-            format.isValid = checkValueValidity(
-              format.value,
-              format.validations
-            );
+            setFormat({
+              ...format,
+              isValid: checkValueValidity(format.value, format.validations),
+            });
           }}
         />
         <input
           type="text"
           placeholder="Актёры"
           className={cn("film-modal__input", {
-            invalid: !stars.pristine && !stars.isValid,
+            invalid: !stars.isPristine && !stars.isValid,
           })}
           onChange={(e) => {
             stars.value = e.target.value;
           }}
           onBlur={() => {
             stars.isPristine = false;
-            stars.isValid = checkValueValidity(stars.value, stars.validations);
+            setStars({
+              ...stars,
+              isValid: checkValueValidity(stars.value, stars.validations),
+            });
           }}
         />
         <button type="submit" className="film-modal__submit">
