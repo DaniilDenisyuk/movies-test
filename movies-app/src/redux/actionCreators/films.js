@@ -1,5 +1,5 @@
 import filmsAT from "../actionTypes/films";
-import { APIURL } from "../../../../config/apiUrl";
+import { APIURL } from "../../shared/apiUrl";
 
 export const addFilm = (film) => ({
   type: filmsAT.ADD_FILM,

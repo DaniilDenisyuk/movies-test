@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+}
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  height: 50px;
+}
+
+.App-body {
+  flex-grow: 1;
+}
+
+.App-footer {
+  display: flex;
+  height: 50px;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  background-color: #282c34;
+}
+
+.row {
+  display: flex;
+}
+
+.films {
+  padding: 50px;
+  &__list {
+  }
+  &__film-modal {
+  }
+  &__add-file {
+    margin: auto;
+    input {
+      display: none;
+    }
+    label {
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #f1f1f1;
+      border: 1px solid #c8c8c8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 20px;
+      &:hover {
+        background-color: #fafafa;
+      }
+    }
+  }
+  &__add-film {
+    margin: auto;
+  }
+}
+
+.list {
+  background-color: #fafafa;
+  position: relative;
+  padding: 25px;
+  margin-bottom: 20px;
+  &__heading {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  &__list {
+  }
+}
+.sorting {
+  position: absolute;
+  display: flex;
+  top: 25px;
+  right: 25px;
+  &__name {
+  }
+  &__year {
+  }
+  &__asc {
+  }
+  &__desc {
+  }
+}
+
+.film-modal {
+  &::before {
+    content: "";
+    top: 0;
+    left: 0;
+    display: block;
+    position: fixed;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  &__form {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #bebebe;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 35px;
+  }
+  &__input {
+    margin-bottom: 15px;
+  }
+  &__heading {
+    margin-top: 0px;
+    margin-bottom: 25px;
+  }
+
+  &__submit {
+    height: 35px;
+    margin-top: 10px;
+    align-self: center;
+  }
+}
+
+.film-li {
+  &:nth-child(n + 1) {
+    background: #ffffff;
+  }
+  &__title {
+  }
+  &__year {
+  }
+  &__delete {
+  }
+}

@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { connect } from "redux";
+import { connect } from "react-redux";
 import { deleteFilm } from "../redux/actionCreators/films";
 
 const FilmLI = ({ className, id, title, year, deleteFilm }) => (

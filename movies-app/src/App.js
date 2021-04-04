@@ -1,15 +1,21 @@
-import logo from "./logo.svg";
-import "./App.css";
-import "./FilmPage.js";
+import "./App.scss";
+import FilmPage from "./components/FilmPage.js";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">MOVIES VIEWER</header>
-      <footer className="App-footer">
-        Copyright belongs to Daniil Denysiuk©
-      </footer>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <header className="App-header">MOVIES VIEWER</header>
+        <div className="App-body">
+          <FilmPage />
+        </div>
+        <footer className="App-footer">
+          Copyright belongs to Daniil Denysiuk©
+        </footer>
+      </div>
+    </Provider>
   );
 }
 
