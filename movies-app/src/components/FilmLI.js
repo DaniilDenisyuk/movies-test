@@ -1,17 +1,28 @@
 import cn from "classnames";
 import { connect } from "react-redux";
-import { deleteFilm } from "../redux/actionCreators/films";
+import { removeFilm } from "../redux/actionCreators/films";
+import { FilmInfoModal } from "./FilmInfoModal";
+import { useState } from "react";
 
-const FilmLI = ({ className, id, title, year, deleteFilm }) => (
-  <li className={cn(className, "film-li")}>
-    <h2 className="film-li__title">{title}</h2>
-    <h3 className="film-li__year">{year}</h3>
-    <button className="film-li__delete" onClick={() => deleteFilm(id)}>
-      Удалить фильм
-    </button>
-  </li>
-);
+const FilmLI = ({ className, film, removeFilm }) => {
+  const [modalOpened, setModalOpened] = useState(false);
+  return (
+    <li className={cn(className, "film-li")}>
+      <h2 className="film-li__title">{film.title}</h2>
+      <h3 className="film-li__year">{film.release_year}</h3>
+      <button className="film-li__info" onClick={() => setModalOpened(true)}>
+        Полная информация
+      </button>
+      <button className="film-li__delete" onClick={() => removeFilm(film.id)}>
+        Удалить фильм
+      </button>
+      {modalOpened && (
+        <FilmInfoModal handleClose={() => setModalOpened(false)} film={film} />
+      )}
+    </li>
+  );
+};
 
-const mapDispatch = { deleteFilm };
+const mapDispatch = { removeFilm };
 
 export default connect(null, mapDispatch)(FilmLI);

@@ -17,22 +17,16 @@ import { sortFilms } from "../redux/selectors";
 
 const FilmList = ({ className, films }) => {
   const filmItems = films.map((film, i) => (
-    <FilmLI
-      key={`film-item-${i}`}
-      className="film-list__li"
-      id={film.id}
-      title={film.title}
-      year={film.year}
-    />
+    <FilmLI key={`film-item-${i}`} className="film-list__li" film={film} />
   ));
   return <ul className={cn(className, "film-list")}>{filmItems}</ul>;
 };
 
 const sortByYear = (order) => (a, b) => {
   if (order === "ASC") {
-    return a.year - b.year;
+    return a.release_year - b.release_year;
   } else {
-    return b.year - a.year;
+    return b.release_year - a.release_year;
   }
 };
 
@@ -76,8 +70,8 @@ const FilmPage = ({
 
   const closeForm = () => setFormOpened(false);
 
-  const handleSubmit = (title, year, format, value) => {
-    postFilm({ title, year, format, value });
+  const handleSubmit = (title, release_year, format, stars) => {
+    postFilm({ title, release_year, format, stars });
     setFormOpened(false);
   };
 

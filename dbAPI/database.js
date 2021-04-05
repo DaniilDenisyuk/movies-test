@@ -6,7 +6,7 @@ function Database(config) {
   this.query = function (sql, values) {
     return this.pool.query(sql, values);
   };
-  this.insert = function (table, record) {
+  this.insert = function (table, record, returning) {
     const keys = Object.keys(record);
     const nums = new Array(keys.length);
     const data = new Array(keys.length);
@@ -17,21 +17,27 @@ function Database(config) {
     }
     const fields = keys.join(", ");
     const params = nums.join(", ");
-    const sql = `INSERT INTO ${table} (${fields}) VALUES (${params})`;
+    const sql = `INSERT INTO ${table} (${fields}) VALUES (${params}) ${
+      returning ? "RETURNING " + returning : ""
+    }`;
     return this.query(sql, data);
   };
 
-  this.select = async function (table, fields = ["*"], condition = null) {
+  this.select = function (table, fields = ["*"], condition = null) {
     const keys = fields.join(", ");
     const sql = `SELECT ${keys} FROM ${table}`;
     let whereClause = "";
-    let args = [];
-    let i = 1;
     if (condition) {
       whereClause = " WHERE " + condition;
     }
-    const res = await this.query(sql + whereClause, args);
-    return res.rows;
+    return this.query(sql, whereClause);
+  };
+
+  this.delete = function (table, condition, returning) {
+    const sql = `DELETE FROM ${table} WHERE ${condition} ${
+      returning ? "RETURNING " + returning : ""
+    }`;
+    return this.query(sql);
   };
 }
 

@@ -1,6 +1,5 @@
 import filmsAT from "../actionTypes/films";
 import { APIURL } from "../../shared/apiUrl";
-import { testFilms } from "../../shared/testFilms";
 
 export const addFilm = (film) => ({
   type: filmsAT.ADD_FILM,
@@ -8,13 +7,12 @@ export const addFilm = (film) => ({
 });
 
 export const fetchFilms = () => (dispatch) => {
-  //dispatch(filmsLoading());
-  return dispatch(addFilms(testFilms));
+  dispatch(filmsLoading());
   return fetch(APIURL + "films")
     .then(
       (response) => {
         if (response.ok) {
-          return response;
+          return response.json();
         } else {
           var error = new Error(
             "Error " + response.status + ": " + response.statusText
@@ -40,9 +38,8 @@ export const filmsFailed = (errmess) => ({
   type: filmsAT.FILMS_FAILED,
   payload: errmess,
 });
-let a = 100;
+
 export const postFilm = (film) => (dispatch) => {
-  return dispatch(addFilm({ ...film, id: ++a }));
   return fetch(APIURL + "films", {
     method: "POST",
     body: JSON.stringify(film),
@@ -54,7 +51,7 @@ export const postFilm = (film) => (dispatch) => {
     .then(
       (response) => {
         if (response.ok) {
-          return response;
+          return response.json();
         } else {
           var error = new Error(
             "Error " + response.status + ": " + response.statusText
@@ -67,7 +64,10 @@ export const postFilm = (film) => (dispatch) => {
         throw error;
       }
     )
-    .then((response) => dispatch(addFilm(response)))
+    .then((id) => {
+      console.log(id);
+      dispatch(addFilm({ ...film, id }));
+    })
     .catch((error) => {
       console.log("post film", error.message);
       alert("Your film could not be posted\nError: " + error.message);
@@ -75,9 +75,12 @@ export const postFilm = (film) => (dispatch) => {
 };
 
 export const postFilmsFile = (file) => (dispatch) => {
-  return fetch(APIURL + "films/file", {
+  const data = new FormData();
+  data.append("file", file);
+
+  return fetch(APIURL + "films/upload", {
     method: "POST",
-    body: { file },
+    body: { data },
     headers: {
       "Content-Type": "application/json",
     },
@@ -123,7 +126,7 @@ export const removeFilm = (id) => (dispatch) => {
     .then(
       (response) => {
         if (response.ok) {
-          return response;
+          return response.json();
         } else {
           var error = new Error(
             "Error " + response.status + ": " + response.statusText

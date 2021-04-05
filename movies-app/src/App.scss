@@ -240,6 +240,19 @@ li {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.3);
   }
+  &__wrapper {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #bebebe;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 35px;
+  }
   &__form {
     position: fixed;
     left: 50%;
@@ -312,9 +325,17 @@ li {
   height: 40px;
   border-bottom: 1px solid #f1f1f1;
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
+  grid-template-columns: 3fr 2fr 1fr 1fr;
   align-items: center;
+  button {
+    height: 35px;
+    font-size: 12px;
+    width: 120px;
+  }
   &__title {
+  }
+  &__info {
+    font-size: 12px;
   }
   &__year {
   }
@@ -337,5 +358,19 @@ li {
   }
   &__sorting {
     margin-bottom: 15px;
+  }
+}
+
+.film-info {
+  width: 450px;
+  .row {
+    display: grid;
+    grid-template-columns: 100px auto;
+    text-align: left;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  &__heading {
+    font-weight: bolder;
   }
 }

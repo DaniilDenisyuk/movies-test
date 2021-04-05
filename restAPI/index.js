@@ -1,12 +1,22 @@
 import express from "express";
-import rubricsRoute from "./rubrics/index.js";
+import filmsRoute from "./films/index.js";
 import Database from "../dbAPI/database.js";
 import dbConf from "../config/db.js";
-const port = 3000;
+import cors from "cors";
+
+const port = 3005;
 
 const app = express();
 
-app.use("/rubrics", rubricsRoute);
+app.use(cors());
+app.use(express.json());
+
+app.use(function (req, res, next) {
+  console.log("Request:", req.originalUrl, req.method, req.body);
+  next();
+});
+
+app.use("/films", filmsRoute);
 app.set("db", new Database(dbConf));
 
 app.listen(port, () => {
