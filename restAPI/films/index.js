@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { readAll, remove, create } from "../../dbAPI/films/index.js";
-import { readRecords } from "../../utils/readRecords.js";
 
 const filmsRoute = Router();
 
@@ -29,13 +28,22 @@ const createFilm = (req, res) => {
     });
 };
 
-const createFilmsFromFile = (req, res) => {
+const createFilms = (req, res) => {
   const db = req.app.get("db");
-  const file = JSON.parse(req.body.file);
-  console.log(file);
-  // create(db).then((result) => {
-  //   res.send(result);
-  // });
+  const films = req.body;
+  const newFilms = films.map(async (film) => {
+    film.id = await create(db, film);
+    return film;
+  });
+  Promise.all(newFilms)
+    .then((newFilms) => {
+      console.log(newFilms);
+      res.send(newFilms);
+    })
+    .catch((err) => {
+      res.status(500).send("Something broke!");
+      console.log(err.message);
+    });
 };
 
 const deleteFilm = (req, res) => {
@@ -54,7 +62,7 @@ const deleteFilm = (req, res) => {
 filmsRoute.get("/", getAllFilms);
 
 filmsRoute.post("/", createFilm);
-filmsRoute.post("/upload", createFilmsFromFile);
+filmsRoute.post("/upload", createFilms);
 
 filmsRoute.delete("/:id", deleteFilm);
 

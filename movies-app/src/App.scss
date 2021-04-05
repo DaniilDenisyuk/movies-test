@@ -190,6 +190,7 @@ li {
   }
   &__add-file {
     margin: auto;
+    position: relative;
     input {
       display: none;
     }
@@ -209,6 +210,15 @@ li {
   }
   &__add-film {
     margin: auto;
+  }
+  &__submit-file {
+    top: 100%;
+    align-items: center;
+    margin-top: 10px;
+    position: absolute;
+    p {
+      margin-right: 10px;
+    }
   }
 }
 .sorting {

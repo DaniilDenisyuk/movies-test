@@ -65,7 +65,6 @@ export const postFilm = (film) => (dispatch) => {
       }
     )
     .then((id) => {
-      console.log(id);
       dispatch(addFilm({ ...film, id }));
     })
     .catch((error) => {
@@ -74,13 +73,10 @@ export const postFilm = (film) => (dispatch) => {
     });
 };
 
-export const postFilmsFile = (file) => (dispatch) => {
-  const data = new FormData();
-  data.append("file", file);
-
+export const postFilms = (films) => (dispatch) => {
   return fetch(APIURL + "films/upload", {
     method: "POST",
-    body: { data },
+    body: JSON.stringify(films),
     headers: {
       "Content-Type": "application/json",
     },

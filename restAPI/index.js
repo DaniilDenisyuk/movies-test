@@ -9,10 +9,12 @@ const port = 3005;
 const app = express();
 
 app.use(cors());
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(function (req, res, next) {
-  console.log("Request:", req.originalUrl, req.method, req.body);
+  // console.log("Request:", req.originalUrl, req.method, req.body);
   next();
 });
 

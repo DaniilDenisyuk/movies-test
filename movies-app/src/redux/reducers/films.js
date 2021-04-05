@@ -11,7 +11,6 @@ const films = (state = initialState, action) => {
   switch (action.type) {
     case filmsAT.ADD_FILM: {
       const { film } = action.payload;
-      console.log(film);
       return {
         ...state,
         isLoading: false,
@@ -23,7 +22,7 @@ const films = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        list: films,
+        list: state.list.concat(films),
       };
     }
     case filmsAT.DELETE_FILM: {

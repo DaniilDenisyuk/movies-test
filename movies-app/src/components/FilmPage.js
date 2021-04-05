@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   fetchFilms,
   postFilm,
-  postFilmsFile,
+  postFilms,
   setOrder,
   setSorting,
 } from "../redux/actionCreators/films";
@@ -56,11 +56,11 @@ const FilmPage = ({
   isLoading,
   fetchFilms,
   postFilm,
-  postFilmsFile,
+  postFilms,
   setOrder,
   setSorting,
 }) => {
-  const [fileChosen, setFileChosen] = useState(false);
+  const [fileChosen, setFileChosen] = useState(null);
   const [formOpened, setFormOpened] = useState(false);
   const modalRef = useRef();
 
@@ -70,9 +70,50 @@ const FilmPage = ({
 
   const closeForm = () => setFormOpened(false);
 
+  const parseMoviesFile = (file) => {
+    const reader = new FileReader();
+    const fields = {
+      title: "Title:",
+      release_year: "Release Year:",
+      format: "Format:",
+      stars: "Stars:",
+    };
+    return new Promise((resolve, reject) => {
+      reader.readAsText(file);
+      reader.onload = function () {
+        const content = reader.result;
+        const films = content.split("\n\n").map(async (filmStr) => {
+          const film = {};
+          const filmFields = filmStr.split("\n");
+          for (const [key, str] of Object.entries(fields)) {
+            filmFields.forEach((field) => {
+              if (field.startsWith(str)) {
+                film[key] = field.replace(str, "").trim();
+              }
+            });
+          }
+          return film;
+        });
+        Promise.all(films)
+          .then((films) => resolve(films))
+          .catch((e) => reject(e));
+      };
+    });
+  };
+
   const handleSubmit = (title, release_year, format, stars) => {
     postFilm({ title, release_year, format, stars });
     setFormOpened(false);
+  };
+
+  const handleFileSubmit = async () => {
+    try {
+      const films = await parseMoviesFile(fileChosen);
+      postFilms(films);
+      setFileChosen(null);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -134,9 +175,12 @@ const FilmPage = ({
             Загрузить фильмы с файла
           </label>
           {fileChosen && (
-            <button type="submit" onClick={() => postFilmsFile(fileChosen)}>
-              Подтвердить
-            </button>
+            <div className="row films__submit-file">
+              <p>{fileChosen.name}</p>
+              <button type="submit" onClick={() => handleFileSubmit()}>
+                Подтвердить
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -153,7 +197,7 @@ const mapState = (state) => {
 const mapDispatch = {
   fetchFilms,
   postFilm,
-  postFilmsFile,
+  postFilms,
   setOrder,
   setSorting,
 };
