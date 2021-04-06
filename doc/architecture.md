@@ -43,3 +43,7 @@
    GET "/api/films" that get all films from db,\ (films route, but movie table)
    POST "/api/films" that write film to db,\
    POST "/api/films/upload" that write multiple films to db.
+
+Project without test cases but I've learned karma, mocha and puppeteer or selenium. And this demands time. I dont have time.
+
+There is some minor problems but i think this work is decent for test task.
