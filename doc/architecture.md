@@ -1,4 +1,4 @@
-Folder structure:
+## Folder structure:
 
 1. config. Contain configs for db connection and similar.
 2. db. Database initialization files.
@@ -11,3 +11,35 @@ Folder structure:
 7. test. Application tests.
 8. utils. Useful functions.
 9. index.js entry point.
+
+## Project architecture
+
+1. react application:
+
+- FilmFormModal : modal with form that can be submitted to restApi. Contains form values in state and handles validation. There is also useClickOutside hook.
+- FilmInfoModal: modal with film info. There is also useClickOutside hook.
+
+- FilmLI: element of film list, represent film title and year. Connected to redux store in case you want to remove film.
+- FilmPage: main component with redux store connection. Also handles filtering(through local state), sorting(through redux store), and file parsing.
+- Redux: have reducers, action creators and action types for films store manipulation and store initialization.
+
+  Store has following structure:\
+  {\
+   &nbsp; &nbsp;films: {\
+   &nbsp; &nbsp;&nbsp; &nbsp;isLoaded: boolean,\
+   &nbsp; &nbsp;&nbsp; &nbsp;list: array,\
+   &nbsp; &nbsp;&nbsp; &nbsp;errMess: string,(actually not used)\
+  &nbsp; &nbsp;&nbsp; &nbsp;sorting: function,\
+   &nbsp; &nbsp;&nbsp; &nbsp;order: string,\
+   &nbsp; &nbsp;}\
+   }.
+
+  You can manipulate storage with actionCreators function such as _fetchFilms_,
+  _removeFilm_, _postFilm_ etc. The FilmPage actually use actions that send request to api and then this actions create another actions that manipulate app store.
+
+2. database: object with postgres pool and some basic function such as _insert_, _select_ etc.
+3. dbApi: functions that interact with database pool object; (abstraction layer if you wish)
+4. restApi: express.js server that handle routes under "/api" with logic distribution through express.router that handle some interaction with database table such as \
+   GET "/api/films" that get all films from db,\ (films route, but movie table)
+   POST "/api/films" that write film to db,\
+   POST "/api/films/upload" that write multiple films to db.
