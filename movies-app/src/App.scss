@@ -368,7 +368,21 @@ li {
     margin-bottom: 20px;
   }
   &__sorting {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  &__search {
+    margin-bottom: 20px;
+  }
+}
+.search {
+  &__heading {
+    margin-bottom: 10px;
+  }
+  &__input {
+    margin-right: 10px;
+  }
+  &__key {
+    margin: 0 5px;
   }
 }
 

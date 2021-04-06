@@ -23,7 +23,7 @@ const FilmList = ({ className, films }) => {
 };
 
 const filterByKey = (list, key, value) =>
-  list.filter((li) => li[key].includes(value));
+  list.filter((li) => li[key].toUpperCase().includes(value.toUpperCase()));
 
 const sortByYear = (order) => (a, b) => {
   if (order === "ASC") {
@@ -65,29 +65,12 @@ const FilmPage = ({
 }) => {
   const [fileChosen, setFileChosen] = useState(null);
   const [formOpened, setFormOpened] = useState(false);
-  const [filterValue, setFilterValue] = useState(null);
+  const [filterValue, setFilterValue] = useState("");
+  const [filterKey, setFilterKey] = useState("title");
 
-  const filtKey = {
-    value: "title",
-    observers: [],
-    subscribe(observer) {
-      this.observers.push(observer);
-    },
-    notify(value) {
-      this.observers.forEach((observer) => observer(value));
-    },
-    get key() {
-      return this.value;
-    },
-    set key(value) {
-      this.value = value;
-      this.notify(value);
-    },
-  };
+  const filterFilms = () => filterByKey(films, filterKey, filterValue);
 
-  const filterFilms = () => filterByKey(films, filtKey.key, filterValue);
-
-  filtKey.subscribe(filterFilms);
+  const filtFilms = filterFilms();
 
   const modalRef = useRef();
 
@@ -147,7 +130,7 @@ const FilmPage = ({
     <div className="films">
       {isLoading ? (
         "идет загрузка..."
-      ) : filtFilms && filtFilms.length ? (
+      ) : (
         <section className="films__list list">
           <h3 className="list__heading">Список фильмов: </h3>
           <div className="list__sorting sorting">
@@ -178,27 +161,28 @@ const FilmPage = ({
                 className="search__input"
                 onChange={(e) => {
                   setFilterValue(e.target.value);
-                  filterFilms();
                 }}
               ></input>
               <button
                 className="search__key"
-                onClick={() => (filtKey.key = "title")}
+                onClick={() => setFilterKey("title")}
               >
                 По названию
               </button>
               <button
                 className="search__key"
-                onClick={() => (filtKey.key = "stars")}
+                onClick={() => setFilterKey("stars")}
               >
                 По актерам
               </button>
             </div>
           </div>
-          <FilmList films={filtFilms} className="list__list" />
+          {filtFilms && filtFilms.length ? (
+            <FilmList films={filtFilms} className="list__list" />
+          ) : (
+            "Таких фильмов нету"
+          )}
         </section>
-      ) : (
-        "Фильмов ещё нету"
       )}
       {formOpened && (
         <div ref={modalRef}>
