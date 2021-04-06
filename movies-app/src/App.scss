@@ -172,6 +172,7 @@ li {
 .App-footer {
   display: flex;
   height: 50px;
+  flex-shrink: 0;
   color: white;
   align-items: center;
   justify-content: center;
