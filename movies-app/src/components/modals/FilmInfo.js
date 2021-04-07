@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import cn from "classnames";
 import { useClickOutside } from "../hooks/useClickOutside";
-export const FilmInfoModal = ({ className, film, handleClose }) => {
+export const FilmInfo = ({ className, film, handleClose }) => {
   const modalRef = useRef();
   useClickOutside(modalRef, handleClose);
   return (
@@ -18,7 +18,7 @@ export const FilmInfoModal = ({ className, film, handleClose }) => {
         </h3>
         <h3 className="row">
           <span className="film-info__heading">Год выпуска:</span>
-          {film.release_year}
+          {film.releaseYear}
         </h3>
         <h3 className="row">
           <span className="film-info__heading">Формат:</span>

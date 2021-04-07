@@ -1,5 +1,5 @@
 import express from "express";
-import filmsRoute from "./films/index.js";
+import moviesRoute from "./movies/index.js";
 import Database from "../dbAPI/database.js";
 import dbConf from "../config/db.js";
 import cors from "cors";
@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/api/films", filmsRoute);
+app.use("/api/movies", moviesRoute);
 app.set("db", new Database(dbConf));
 
 app.listen(port, () => {

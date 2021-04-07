@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
 import cn from "classnames";
-import { required, number } from "../shared/validations";
-import { useClickOutside } from "../hooks/useClickOutside";
+import { required, number } from "../../shared/validations";
+import { useClickOutside } from "../../hooks/useClickOutside";
 
-const FilmFormModal = ({ className, handleSubmit, handleClose }) => {
+const FilmForm = ({ className, handleSubmit, handleClose }) => {
   const formRef = useRef();
   const [title, setTitle] = useState({
     isPristine: true,

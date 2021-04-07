@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { connect } from "react-redux";
 import FilmLI from "./FilmLI";
-import FilmForm from "./FilmFormModal";
+import FilmForm from "./modals/FilmForm";
 
 import { useState, useEffect, useRef } from "react";
 
@@ -13,8 +13,6 @@ import {
   setSorting,
 } from "../redux/actionCreators/films";
 
-import { sortFilms } from "../redux/selectors";
-
 const FilmList = ({ className, films }) => {
   const filmItems = films.map((film, i) => (
     <FilmLI key={`film-item-${i}`} className="film-list__li" film={film} />
@@ -25,33 +23,22 @@ const FilmList = ({ className, films }) => {
 const filterByKey = (list, key, value) =>
   list.filter((li) => li[key].toUpperCase().includes(value.toUpperCase()));
 
-const sortByYear = (order) => (a, b) => {
-  if (order === "ASC") {
-    return a.release_year - b.release_year;
-  } else {
-    return b.release_year - a.release_year;
-  }
+const sortByYear = (collection, order) => {
+  const mapped = collection.map((v, i) => ({ i, value: v.releaseYear }));
+  mapped.sort((a, b) => {
+    const result = a.value - b.value;
+    return order === "ASC" ? result : -result;
+  });
+  return mapped.map((v) => collection[v.i]);
 };
 
-const sortByTitle = (order) => (a, b) => {
-  const aName = a.title.toUpperCase();
-  const bName = b.title.toUpperCase();
-  if (order === "ASC") {
-    if (aName < bName) {
-      return -1;
-    }
-    if (aName > bName) {
-      return 1;
-    }
-  } else {
-    if (aName > bName) {
-      return -1;
-    }
-    if (aName < bName) {
-      return 1;
-    }
-  }
-  return 0;
+const sortByTitle = (collection, order) => {
+  const mapped = collection.map((v, i) => ({ i, value: v.title }));
+  mapped.sort((a, b) => {
+    const result = a.localeCompare(b, undefined, { sensitivity: "base" });
+    return order === "ASC" ? result : -result;
+  });
+  return mapped.map((v) => collection[v.i]);
 };
 
 const FilmPage = ({
@@ -84,7 +71,7 @@ const FilmPage = ({
     const reader = new FileReader();
     const fields = {
       title: "Title:",
-      release_year: "Release Year:",
+      releaseYear: "Release Year:",
       format: "Format:",
       stars: "Stars:",
     };
@@ -111,8 +98,8 @@ const FilmPage = ({
     });
   };
 
-  const handleSubmit = (title, release_year, format, stars) => {
-    postFilm({ title, release_year, format, stars });
+  const handleSubmit = (title, releaseYear, format, stars) => {
+    postFilm({ title, releaseYear, format, stars });
     setFormOpened(false);
   };
 
@@ -224,9 +211,9 @@ const FilmPage = ({
 };
 
 const mapState = (state) => {
-  const { sorting, order } = state.films;
-  const films = sortFilms(state, sorting, order);
-  return { films, order, sorting, isLoading: state.films.isLoading };
+  const { sorting, order, list, isLoading } = state.films;
+  const films = sorting(list, order);
+  return { films, order, sorting, isLoading };
 };
 
 const mapDispatch = {

@@ -9,7 +9,7 @@ const FilmLI = ({ className, film, removeFilm }) => {
   return (
     <li className={cn(className, "film-li")}>
       <h2 className="film-li__title">{film.title}</h2>
-      <h3 className="film-li__year">{film.release_year}</h3>
+      <h3 className="film-li__year">{film.releaseYear}</h3>
       <button className="film-li__info" onClick={() => setModalOpened(true)}>
         Полная информация
       </button>

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { readAll, remove, create } from "../../dbAPI/films/index.js";
+import { readAll, remove, create } from "../../dbAPI/movie/index.js";
 
-const filmsRoute = Router();
+const moviesRoute = Router();
 
 const getAllFilms = (req, res) => {
   const db = req.app.get("db");
