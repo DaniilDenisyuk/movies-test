@@ -7,4 +7,6 @@
 - 1-st server (restapi) in root folder with "npm start";
 - 2-nd server (react-app) in movies-app with "serve -s build"
 
-4. Go to 'http://localhost:5000';
+4. Go to http://localhost:5000;
+
+5. folder [test](../test) contains sample_movies.txt that you can upload to site
