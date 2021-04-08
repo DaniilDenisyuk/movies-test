@@ -7,7 +7,7 @@ INSERT INTO Movie (Title, ReleaseYear, Format) VALUES
   ('test6',2005, 'format6'),
   ('test7',1997, 'format7');
 
-  INSERT INTO Actor (FirstName, LastName) VALUES
+INSERT INTO Actor (FirstName, LastName) VALUES
   ('firstname1', 'lastname1'),
   ('firstname2', 'lastname2'),
   ('firstname3', 'lastname3'),
@@ -15,7 +15,7 @@ INSERT INTO Movie (Title, ReleaseYear, Format) VALUES
   ('firstname5', 'lastname5'),
   ('firstname6', 'lastname6');
 
-  INSERT INTO ActorMovie (ActorId, MovieId) VALUES
+INSERT INTO ActorMovie (ActorId, MovieId) VALUES
   (1, 1),
   (1, 2),
   (1, 4),

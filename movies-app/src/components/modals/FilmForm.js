@@ -77,7 +77,7 @@ const FilmForm = ({ handleSubmit }) => {
           invalid: !title.isPristine && !title.isValid,
         })}
         onChange={(e) => {
-          title.value = e.target.value;
+          title.value = e.target.value.trim();
         }}
         onBlur={() => {
           title.isPristine = false;
@@ -87,14 +87,14 @@ const FilmForm = ({ handleSubmit }) => {
           });
         }}
       />
-      <select
+      <input
         type="text"
-        placeholder="Год выпуска"
+        placeholder="Год выпуска (1850-сейчас)"
         className={cn("film-form__input", {
           invalid: !year.isPristine && !year.isValid,
         })}
         onChange={(e) => {
-          year.value = e.target.value;
+          year.value = e.target.value.trim();
         }}
         onBlur={() => {
           year.isPristine = false;
@@ -103,15 +103,10 @@ const FilmForm = ({ handleSubmit }) => {
             isValid: checkValueValidity(year.value, year.validations),
           });
         }}
-      >
-        <option value="VHC">VHC</option>
-        <option value="DVD">DVD</option>
-        <option value="Blu-Ray">Blu-Ray</option>
-      </select>
-      <input
-        type="text"
-        placeholder="Формат"
-        className={cn("film-form__input", {
+      />
+      <select
+        required
+        className={cn("film-form__select", {
           invalid: !format.isPristine && !format.isValid,
         })}
         onChange={(e) => {
@@ -124,15 +119,22 @@ const FilmForm = ({ handleSubmit }) => {
             isValid: checkValueValidity(format.value, format.validations),
           });
         }}
-      />
+      >
+        <option value="" disabled selected hidden>
+          Выберите формат
+        </option>
+        <option value="VHC">VHC</option>
+        <option value="DVD">DVD</option>
+        <option value="Blu-Ray">Blu-Ray</option>
+      </select>
       <input
         type="text"
-        placeholder="Актёры"
+        placeholder="Актёры (допустимы только единичные комы и тире)"
         className={cn("film-form__input", {
           invalid: !stars.isPristine && !stars.isValid,
         })}
         onChange={(e) => {
-          stars.value = e.target.value;
+          stars.value = e.target.value.trim();
         }}
         onBlur={() => {
           stars.isPristine = false;

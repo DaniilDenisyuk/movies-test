@@ -1,17 +1,48 @@
 import { Router } from "express";
-import { readAll, remove, create } from "../../dbAPI/movie/index.js";
+import { readFile } from "fs/promises";
+import { parseMovies } from "../../utils/parseMovies.js";
+import {
+  readAll,
+  remove,
+  create,
+  createBunch,
+} from "../../dbAPI/movie/index.js";
+import multer from "multer";
+
+const DIR = "./uploads/";
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, DIR);
+  },
+  filename: (req, file, cb) => {
+    const fileName = file.originalname.toLowerCase().split(" ").join("-");
+    cb(null, fileName);
+  },
+});
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "text/plain" || file.mimetype == "text/csv") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Only .txt and .csv format allowed!"));
+    }
+  },
+});
 
 const moviesRoute = Router();
 
 const getAllFilms = (req, res) => {
   const db = req.app.get("db");
   readAll(db)
-    .then((result) => {
-      res.send(result);
+    .then((films) => {
+      res.send(films);
     })
     .catch((err) => {
-      res.status(500).send("Something broke!");
-      console.log(err.message);
+      console.log(err);
+      res.status(500).json({ error: "Cannot get films" + err.message });
     });
 };
 
@@ -20,29 +51,34 @@ const createFilm = (req, res) => {
   const film = req.body;
   create(db, film)
     .then((insertedId) => {
-      res.send(insertedId.toString());
+      res.send({
+        message: "File succesfully uploaded",
+        id: insertedId,
+      });
     })
     .catch((err) => {
-      res.status(500).send("Something broke!");
-      console.log(err.message);
+      console.log(err);
+      res.status(500).json({ error: "Cannot create film" + err.message });
     });
 };
 
-const createFilms = (req, res) => {
+const uploadFilms = (req, res) => {
   const db = req.app.get("db");
-  const films = req.body;
-  const newFilms = films.map(async (film) => {
-    film.id = await create(db, film);
-    return film;
-  });
-  Promise.all(newFilms)
-    .then((newFilms) => {
-      console.log(newFilms);
-      res.send(newFilms);
+  const { encoding, path } = req.file.path;
+  readFile(path, { encoding })
+    .then((content) => parseMovies(content))
+    .then((movies) => {
+      const bunch = movies.map(({ title, releaseYear, format, stars }) => ({
+        movie: { title, releaseYear, format },
+        actor: stars,
+      }));
+      createBunch(db, bunch).then(() => {
+        res.status(201).send({ message: "File succesfully uploaded" });
+      });
     })
-    .catch((err) => {
-      res.status(500).send("Something broke!");
-      console.log(err.message);
+    .catch((e) => {
+      console.log(e);
+      res.status(500).json({ error: "Cannot upload your file: " + e.message });
     });
 };
 
@@ -51,19 +87,24 @@ const deleteFilm = (req, res) => {
   const db = req.app.get("db");
   remove(db, id)
     .then((remId) => {
-      res.send(remId.toString());
+      res.send({ message: "Film succesfully deleted", id: remId });
     })
     .catch((err) => {
-      res.status(500).send("Something broke!");
-      console.log(err.message);
+      console.log(err);
+      res
+        .status(500)
+        .json({ error: "Cannot delete given film: " + err.message });
     });
 };
 
-filmsRoute.get("/", getAllFilms);
+const getFilmById = (req, res) => {};
 
-filmsRoute.post("/", createFilm);
-filmsRoute.post("/upload", createFilms);
+moviesRoute.get("/", getAllFilms);
+moviesRoute.get("/:id", getFilmById);
 
-filmsRoute.delete("/:id", deleteFilm);
+moviesRoute.post("/", createFilm);
+moviesRoute.post("/upload", upload.single("file"), uploadFilms);
 
-export default filmsRoute;
+moviesRoute.delete("/:id", deleteFilm);
+
+export default moviesRoute;

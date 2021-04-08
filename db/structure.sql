@@ -47,3 +47,15 @@ BEGIN
   RETURN actorId;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION insertIntoActorMovie(actorId INTEGER, movieId INTEGER) RETURNS void AS $$
+  INSERT INTO ActorMovie (ActorId, MovieId) VALUES ($1, $2);
+$$ LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION allMovies() RETURNS
+TABLE(id int, title varchar, releaseyear varchar, format varchar, actors varchar) AS $$
+  SELECT m.*, STRING_AGG(a.FirstName || ' ' || a.LastName, ', ') as actors FROM Movie AS m 
+  INNER JOIN ActorMovie AS am ON m.Id=am.movieId 
+  INNER JOIN Actor AS a ON a.Id=am.actorId
+  GROUP BY m.Id;
+$$ LANGUAGE SQL;
