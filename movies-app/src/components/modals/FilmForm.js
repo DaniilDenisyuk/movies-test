@@ -1,14 +1,30 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import cn from "classnames";
-import { required, number } from "../../shared/validations";
-import { useClickOutside } from "../../hooks/useClickOutside";
-
-const FilmForm = ({ className, handleSubmit, handleClose }) => {
-  const formRef = useRef();
+import {
+  required,
+  number,
+  minMaxValue,
+  limitSpecialChars,
+  limitNumbers,
+  uniqueNames,
+} from "../../shared/validations";
+import "./FilmForm.scss";
+// I can extract it to some generic element later
+const FilmForm = ({ handleSubmit }) => {
   const [title, setTitle] = useState({
     isPristine: true,
     isValid: false,
     validations: [required],
+    value: "",
+  });
+  const [year, setYear] = useState({
+    isPristine: true,
+    isValid: false,
+    validations: [
+      required,
+      number,
+      minMaxValue(1850, new Date().getFullYear()),
+    ],
     value: "",
   });
   const [format, setFormat] = useState({
@@ -20,15 +36,10 @@ const FilmForm = ({ className, handleSubmit, handleClose }) => {
   const [stars, setStars] = useState({
     isPristine: true,
     isValid: false,
-    validations: [required],
+    validations: [required, limitSpecialChars, limitNumbers, uniqueNames(",")],
     value: "",
   });
-  const [year, setYear] = useState({
-    isPristine: true,
-    isValid: false,
-    validations: [required, number],
-    value: "",
-  });
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (!checkFieldsValidity(title, format, stars, year)) {
@@ -36,8 +47,6 @@ const FilmForm = ({ className, handleSubmit, handleClose }) => {
     }
     handleSubmit(title.value, year.value, format.value, stars.value);
   };
-
-  useClickOutside(formRef, handleClose);
 
   const checkFieldsValidity = (...fields) => {
     for (const field of fields) {
@@ -47,102 +56,97 @@ const FilmForm = ({ className, handleSubmit, handleClose }) => {
   };
   const checkValueValidity = (value, validations) => {
     for (const validation of validations) {
-      if (validation(value, "errorHere")) {
+      if (!validation(value)) {
         return false;
       }
     }
     return true;
   };
+
   return (
-    <div className={cn(className, "film-modal")}>
-      <form
-        ref={formRef}
-        onSubmit={handleFormSubmit}
-        className="film-modal__form"
+    <form onSubmit={handleFormSubmit} className="film-form">
+      <h2 className="film-form__heading">
+        Заполните форму,
+        <br />
+        что бы добавить фильм:
+      </h2>
+      <input
+        type="text"
+        placeholder="Название"
+        className={cn("film-form__input", {
+          invalid: !title.isPristine && !title.isValid,
+        })}
+        onChange={(e) => {
+          title.value = e.target.value;
+        }}
+        onBlur={() => {
+          title.isPristine = false;
+          setTitle({
+            ...title,
+            isValid: checkValueValidity(title.value, title.validations),
+          });
+        }}
+      />
+      <select
+        type="text"
+        placeholder="Год выпуска"
+        className={cn("film-form__input", {
+          invalid: !year.isPristine && !year.isValid,
+        })}
+        onChange={(e) => {
+          year.value = e.target.value;
+        }}
+        onBlur={() => {
+          year.isPristine = false;
+          setYear({
+            ...year,
+            isValid: checkValueValidity(year.value, year.validations),
+          });
+        }}
       >
-        <span
-          className="film-modal__close"
-          onClick={() => handleClose()}
-        ></span>
-        <p className="film-modal__heading">
-          Заполните форму,
-          <br />
-          что бы добавить фильм
-        </p>
-        <input
-          type="text"
-          placeholder="Название"
-          className={cn("film-modal__input", {
-            invalid: !title.isPristine && !title.isValid,
-          })}
-          onChange={(e) => {
-            title.value = e.target.value;
-          }}
-          onBlur={() => {
-            title.isPristine = false;
-            setTitle({
-              ...title,
-              isValid: checkValueValidity(title.value, title.validations),
-            });
-          }}
-        />
-        <input
-          type="text"
-          placeholder="Год выпуска"
-          className={cn("film-modal__input", {
-            invalid: !year.isPristine && !year.isValid,
-          })}
-          onChange={(e) => {
-            year.value = e.target.value;
-          }}
-          onBlur={() => {
-            year.isPristine = false;
-            setYear({
-              ...year,
-              isValid: checkValueValidity(year.value, year.validations),
-            });
-          }}
-        />
-        <input
-          type="text"
-          placeholder="Формат"
-          className={cn("film-modal__input", {
-            invalid: !format.isPristine && !format.isValid,
-          })}
-          onChange={(e) => {
-            format.value = e.target.value;
-          }}
-          onBlur={() => {
-            format.isPristine = false;
-            setFormat({
-              ...format,
-              isValid: checkValueValidity(format.value, format.validations),
-            });
-          }}
-        />
-        <input
-          type="text"
-          placeholder="Актёры"
-          className={cn("film-modal__input", {
-            invalid: !stars.isPristine && !stars.isValid,
-          })}
-          onChange={(e) => {
-            stars.value = e.target.value;
-          }}
-          onBlur={() => {
-            stars.isPristine = false;
-            setStars({
-              ...stars,
-              isValid: checkValueValidity(stars.value, stars.validations),
-            });
-          }}
-        />
-        <button type="submit" className="film-modal__submit">
-          Подтвердить
-        </button>
-      </form>
-    </div>
+        <option value="VHC">VHC</option>
+        <option value="DVD">DVD</option>
+        <option value="Blu-Ray">Blu-Ray</option>
+      </select>
+      <input
+        type="text"
+        placeholder="Формат"
+        className={cn("film-form__input", {
+          invalid: !format.isPristine && !format.isValid,
+        })}
+        onChange={(e) => {
+          format.value = e.target.value;
+        }}
+        onBlur={() => {
+          format.isPristine = false;
+          setFormat({
+            ...format,
+            isValid: checkValueValidity(format.value, format.validations),
+          });
+        }}
+      />
+      <input
+        type="text"
+        placeholder="Актёры"
+        className={cn("film-form__input", {
+          invalid: !stars.isPristine && !stars.isValid,
+        })}
+        onChange={(e) => {
+          stars.value = e.target.value;
+        }}
+        onBlur={() => {
+          stars.isPristine = false;
+          setStars({
+            ...stars,
+            isValid: checkValueValidity(stars.value, stars.validations),
+          });
+        }}
+      />
+      <button type="submit" className="film-form__submit">
+        Подтвердить
+      </button>
+    </form>
   );
 };
 
-export default FilmFormModal;
+export default FilmForm;

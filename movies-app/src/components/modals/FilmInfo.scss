@@ -1,0 +1,22 @@
+.film-info {
+  width: 300px;
+  border: 1px solid #bbbbbb;
+  &__row {
+    border-bottom: 1px solid #bbbbbb;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    text-align: left;
+    gap: 15px;
+    margin-bottom: 15px;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  &__row-name {
+    border-right: 1px solid #bbbbbb;
+    font-weight: bolder;
+  }
+  &__heading {
+    font-weight: bolder;
+  }
+}

@@ -1,0 +1,22 @@
+.film-form {
+  display: flex;
+  flex-direction: column;
+  &__heading {
+  }
+  &__input {
+    margin-bottom: 15px;
+    height: 40px;
+    width: 250px;
+    padding: 0 15px;
+    border: 1px solid #bebebe;
+    border-radius: 5px;
+    .invalid {
+      border-color: red;
+    }
+  }
+  &__submit {
+    height: 35px;
+    margin-top: 10px;
+    align-self: center;
+  }
+}

@@ -1,0 +1,59 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  &__body {
+    position: relative;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 7px;
+    z-index: 2;
+    margin: auto;
+  }
+  &__close {
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 15px;
+    height: 15px;
+    right: 20px;
+    top: 20px;
+    &::before,
+    &::after {
+      content: "";
+      background: black;
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 1px;
+    }
+    &::before {
+      transform: rotate(45deg);
+    }
+    &::after {
+      transform: rotate(-45deg);
+    }
+    &::hover {
+      transform: scale(1.1);
+      &::before,
+      &::before {
+        background: rgb(36, 35, 35);
+      }
+    }
+  }
+  &__shadow-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}

@@ -1,23 +1,34 @@
 import cn from "classnames";
 import { connect } from "react-redux";
 import { removeFilm } from "../redux/actionCreators/films";
-import { FilmInfoModal } from "./FilmInfoModal";
+import { FilmInfoModal, ConfirmDeletionModal } from "./modals";
 import { useState } from "react";
 
 const FilmLI = ({ className, film, removeFilm }) => {
-  const [modalOpened, setModalOpened] = useState(false);
+  const [infoOpened, setInfoOpened] = useState(false);
+  const [confirmOpened, setConfirmOpened] = useState(false);
   return (
     <li className={cn(className, "film-li")}>
       <h2 className="film-li__title">{film.title}</h2>
       <h3 className="film-li__year">{film.releaseYear}</h3>
-      <button className="film-li__info" onClick={() => setModalOpened(true)}>
+      <button className="film-li__info" onClick={() => setInfoOpened(true)}>
         Полная информация
       </button>
-      <button className="film-li__delete" onClick={() => removeFilm(film.id)}>
+      <button
+        className="film-li__delete"
+        onClick={() => setConfirmOpened(true)}
+      >
         Удалить фильм
       </button>
-      {modalOpened && (
-        <FilmInfoModal handleClose={() => setModalOpened(false)} film={film} />
+      {infoOpened && (
+        <FilmInfoModal handleClose={() => setInfoOpened(false)} film={film} />
+      )}
+      {confirmOpened && (
+        <ConfirmDeletionModal
+          handleClose={() => setConfirmOpened(false)}
+          onConfirm={() => removeFilm(film.id)}
+          onDecline={() => setConfirmOpened(false)}
+        />
       )}
     </li>
   );

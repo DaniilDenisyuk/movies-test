@@ -1,34 +1,25 @@
-import { useRef } from "react";
-import cn from "classnames";
-import { useClickOutside } from "../hooks/useClickOutside";
-export const FilmInfo = ({ className, film, handleClose }) => {
-  const modalRef = useRef();
-  useClickOutside(modalRef, handleClose);
-  return (
-    <div className={cn(className, "film-modal")}>
-      <div ref={modalRef} className="film-modal__wrapper film-info">
-        <p className="film-modal__heading">Информация о фильме</p>
-        <span
-          className="film-modal__close"
-          onClick={() => handleClose()}
-        ></span>
-        <h3 className="row">
-          <span className="film-info__heading">Название:</span>
-          {film.title}
-        </h3>
-        <h3 className="row">
-          <span className="film-info__heading">Год выпуска:</span>
-          {film.releaseYear}
-        </h3>
-        <h3 className="row">
-          <span className="film-info__heading">Формат:</span>
-          {film.format}
-        </h3>
-        <h3 className="row">
-          <span className="film-info__heading">Актеры:</span>
-          {film.stars}
-        </h3>
-      </div>
-    </div>
-  );
-};
+import "./FilmInfo.scss";
+
+const FilmInfo = ({ film }) => (
+  <div className="film-info">
+    <h2 className="film-info__heading">Информация о фильме</h2>
+    <h3 className="film-info__row">
+      <span className="film-info__row-name">Название:</span>
+      {film.title}
+    </h3>
+    <h3 className="film-info__row">
+      <span className="film-info__heading">Год выпуска:</span>
+      {film.releaseYear}
+    </h3>
+    <h3 className="film-info__row">
+      <span className="film-info__row-name">Формат:</span>
+      {film.format}
+    </h3>
+    <h3 className="film-info__row">
+      <span className="film-info__row-name">Актеры:</span>
+      {film.stars}
+    </h3>
+  </div>
+);
+
+export default FilmInfo;
