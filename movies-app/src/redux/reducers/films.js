@@ -1,7 +1,10 @@
 import filmsAT from "../actionTypes/films";
 const initialState = {
   isLoading: true,
-  errMessage: null,
+  message: {
+    type: null,
+    text: "",
+  },
   list: [],
   sorting: null,
   order: "ASC",
@@ -22,7 +25,7 @@ const films = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-        list: state.list.concat(films),
+        list: films,
       };
     }
     case filmsAT.DELETE_FILM: {
@@ -39,12 +42,19 @@ const films = (state = initialState, action) => {
         sorting: sortFunc,
       };
     }
-    case filmsAT.FILMS_FAILED: {
-      const { errMessage } = action.payload;
+    case filmsAT.ADD_MESSAGE: {
+      const { message, type } = action.payload;
       return {
         ...state,
+        message: { text: message, type },
+      };
+    }
+    case filmsAT.LOADING_FAILED: {
+      const { message } = action.payload;
+      return {
+        ...state,
+        message: { text: message, type: 0 },
         isLoading: false,
-        errMessage: errMessage,
       };
     }
     case filmsAT.FILMS_LOADING: {

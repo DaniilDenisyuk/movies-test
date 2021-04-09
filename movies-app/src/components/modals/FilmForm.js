@@ -106,7 +106,8 @@ const FilmForm = ({ handleSubmit }) => {
       />
       <select
         required
-        className={cn("film-form__select", {
+        defaultValue=""
+        className={cn("film-form__input", {
           invalid: !format.isPristine && !format.isValid,
         })}
         onChange={(e) => {
@@ -120,7 +121,7 @@ const FilmForm = ({ handleSubmit }) => {
           });
         }}
       >
-        <option value="" disabled selected hidden>
+        <option value="" disabled hidden>
           Выберите формат
         </option>
         <option value="VHC">VHC</option>

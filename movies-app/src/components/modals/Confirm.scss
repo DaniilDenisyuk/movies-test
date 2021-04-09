@@ -1,0 +1,12 @@
+.confirm {
+  width: 300px;
+  &__message {
+    margin-bottom: 15px;
+  }
+  &__buttons {
+    display: flex;
+    justify-content: space-around;
+  }
+  &__button {
+  }
+}

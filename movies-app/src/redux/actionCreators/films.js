@@ -1,146 +1,29 @@
 import filmsAT from "../actionTypes/films";
-import { APIURL } from "../../shared/apiUrl";
+import { API_URL, UPLOAD_FILMS_URI, FILMS_URI } from "../../shared/apiConf";
 
 export const addFilm = (film) => ({
   type: filmsAT.ADD_FILM,
   payload: { film },
 });
 
-export const fetchFilms = () => (dispatch) => {
-  dispatch(filmsLoading());
-  return fetch(APIURL + "films")
-    .then(
-      (response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          var error = new Error(
-            "Error " + response.status + ": " + response.statusText
-          );
-          error.response = response;
-          throw error;
-        }
-      },
-      (error) => {
-        var errmess = new Error(error.message);
-        throw errmess;
-      }
-    )
-    .then((films) => dispatch(addFilms(films)))
-    .catch((error) => dispatch(filmsFailed(error.message)));
-};
-
 export const filmsLoading = () => ({
   type: filmsAT.FILMS_LOADING,
 });
 
-export const filmsFailed = (errmess) => ({
-  type: filmsAT.FILMS_FAILED,
-  payload: errmess,
+export const loadingFailed = (message) => ({
+  type: filmsAT.LOADING_FAILED,
+  payload: { message },
 });
 
-export const postFilm = (film) => (dispatch) => {
-  return fetch(APIURL + "films", {
-    method: "POST",
-    body: JSON.stringify(film),
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-  })
-    .then(
-      (response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          var error = new Error(
-            "Error " + response.status + ": " + response.statusText
-          );
-          error.response = response;
-          throw error;
-        }
-      },
-      (error) => {
-        throw error;
-      }
-    )
-    .then((id) => {
-      dispatch(addFilm({ ...film, id }));
-    })
-    .catch((error) => {
-      console.log("post film", error.message);
-      alert("Your film could not be posted\nError: " + error.message);
-    });
-};
-
-export const postFilms = (films) => (dispatch) => {
-  return fetch(APIURL + "films/upload", {
-    method: "POST",
-    body: JSON.stringify(films),
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-  })
-    .then(
-      (response) => {
-        if (response.ok) {
-          return response;
-        } else {
-          var error = new Error(
-            "Error " + response.status + ": " + response.statusText
-          );
-          error.response = response;
-          throw error;
-        }
-      },
-      (error) => {
-        throw error;
-      }
-    )
-    .then((response) => response.json())
-    .then((response) => dispatch(addFilms(response)))
-    .catch((error) => {
-      console.log("post film file", error.message);
-      alert("Your comment could not be posted\nError: " + error.message);
-    });
-};
+export const addMessage = (message, type) => ({
+  type: filmsAT.ADD_MESSAGE,
+  payload: { message, type },
+});
 
 export const addFilms = (films) => ({
   type: filmsAT.ADD_FILMS,
   payload: { films },
 });
-
-export const removeFilm = (id) => (dispatch) => {
-  return fetch(APIURL + `films/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "same-origin",
-  })
-    .then(
-      (response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          var error = new Error(
-            "Error " + response.status + ": " + response.statusText
-          );
-          error.response = response;
-          throw error;
-        }
-      },
-      (error) => {
-        throw error;
-      }
-    )
-    .then((remId) => dispatch(deleteFilm(remId)))
-    .catch((error) => {
-      console.log("delete film", error.message);
-      alert("Film could not be deleted\nError: " + error.message);
-    });
-};
 
 export const deleteFilm = (id) => ({
   type: filmsAT.DELETE_FILM,
@@ -156,3 +39,131 @@ export const setOrder = (order) => ({
   type: filmsAT.SET_ORDER,
   payload: { order },
 });
+
+export const fetchFilms = () => (dispatch) => {
+  dispatch(filmsLoading());
+  const Url = new URL(FILMS_URI, API_URL);
+  console.log(Url);
+  return fetch(Url)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((body) => {
+          let error = body.error;
+          if (!error) {
+            error = "Error " + response.status + ": " + response.statusText;
+          }
+          throw new Error(error);
+        });
+      }
+    })
+    .then((films) => {
+      console.log(films);
+      dispatch(addFilms(films));
+    })
+    .catch((error) => {
+      console.log(error);
+      dispatch(loadingFailed(error.message, 0));
+    });
+};
+
+export const postFilm = (film) => (dispatch) => {
+  const Url = new URL(FILMS_URI, API_URL);
+  return fetch(Url, {
+    method: "POST",
+    body: JSON.stringify(film),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "same-origin",
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((body) => {
+          let error = body.error;
+          if (!error) {
+            error = "Error " + response.status + ": " + response.statusText;
+          }
+          throw new Error(error);
+        });
+      }
+    })
+    .then((id) => {
+      dispatch(addMessage("Your film successfully posted", 1));
+      dispatch(addFilm({ ...film, id }));
+    })
+    .catch((error) => {
+      addMessage("Your film could not be posted\nError: " + error.message, 0);
+    });
+};
+
+export const postFilmsFile = (file) => (dispatch) => {
+  const Url = new URL(UPLOAD_FILMS_URI, API_URL);
+  const formData = new FormData();
+  formData.append("file", file);
+  return fetch(Url, {
+    method: "POST",
+    body: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    credentials: "same-origin",
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        let errorMess = response.json().error;
+        if (!errorMess) {
+          errorMess = "Error " + response.status + ": " + response.statusText;
+        }
+        throw new Error(errorMess);
+      }
+    })
+    .then(() => {
+      dispatch(fetchFilms());
+      dispatch(addMessage("Your file succesfully posted", 1));
+    })
+    .catch((error) => {
+      dispatch(
+        addMessage("Your file could) not be posted\nError: " + error.message, 0)
+      );
+    });
+};
+
+export const removeFilm = (id) => (dispatch) => {
+  const Url = new URL(`${FILMS_URI}/${id}`, API_URL);
+  return fetch(Url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "same-origin",
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((body) => {
+          let error = body.error;
+          if (!error) {
+            error = "Error " + response.status + ": " + response.statusText;
+          }
+          throw new Error(error);
+        });
+      }
+    })
+    .then(({ message, id }) => {
+      console.log(id);
+      dispatch(deleteFilm(id));
+      dispatch(addMessage(message, 1));
+    })
+    .catch((error) => {
+      dispatch(
+        addMessage("Film could not be deleted\nError: " + error.message, 0)
+      );
+    });
+};

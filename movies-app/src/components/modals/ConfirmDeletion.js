@@ -1,6 +1,6 @@
-import "Confirm.scss";
+import "./Confirm.scss";
 
-const ConfirmDeletion = ({ onConfirm, onDecline }) => {
+const ConfirmDeletion = ({ onConfirm, onDecline }) => (
   <div className="confirm">
     <p className="confirm__message">
       Вы уверены, что хотите безвозвратно удалить фильм?
@@ -13,7 +13,7 @@ const ConfirmDeletion = ({ onConfirm, onDecline }) => {
         Отмена
       </button>
     </div>
-  </div>;
-};
+  </div>
+);
 
 export default ConfirmDeletion;

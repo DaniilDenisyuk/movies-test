@@ -1,7 +1,7 @@
 export const parseMovies = (content) => {
   const fields = {
     title: "Title:",
-    releaseYear: "Release Year:",
+    releaseyear: "Release Year:",
     format: "Format:",
     stars: "Stars:",
   };

@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   &__heading {
+    margin-bottom: 15px;
   }
   &__input {
     margin-bottom: 15px;
@@ -10,9 +11,11 @@
     padding: 0 15px;
     border: 1px solid #bebebe;
     border-radius: 5px;
-    .invalid {
+    &.invalid {
       border-color: red;
     }
+  }
+  &__select {
   }
   &__submit {
     height: 35px;

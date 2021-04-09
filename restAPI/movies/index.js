@@ -3,7 +3,7 @@ import { readFile } from "fs/promises";
 import { parseMovies } from "../../utils/parseMovies.js";
 import {
   readAll,
-  remove,
+  removeById,
   create,
   createBunch,
 } from "../../dbAPI/movie/index.js";
@@ -37,8 +37,8 @@ const moviesRoute = Router();
 const getAllFilms = (req, res) => {
   const db = req.app.get("db");
   readAll(db)
-    .then((films) => {
-      res.send(films);
+    .then((movies) => {
+      res.send(movies);
     })
     .catch((err) => {
       console.log(err);
@@ -68,8 +68,8 @@ const uploadFilms = (req, res) => {
   readFile(path, { encoding })
     .then((content) => parseMovies(content))
     .then((movies) => {
-      const bunch = movies.map(({ title, releaseYear, format, stars }) => ({
-        movie: { title, releaseYear, format },
+      const bunch = movies.map(({ title, releaseyear, format, stars }) => ({
+        movie: { title, releaseyear, format },
         actor: stars,
       }));
       createBunch(db, bunch).then(() => {
@@ -85,9 +85,9 @@ const uploadFilms = (req, res) => {
 const deleteFilm = (req, res) => {
   const id = req.params.id;
   const db = req.app.get("db");
-  remove(db, id)
-    .then((remId) => {
-      res.send({ message: "Film succesfully deleted", id: remId });
+  removeById(db, id)
+    .then((id) => {
+      res.send({ message: "Film succesfully deleted", id });
     })
     .catch((err) => {
       console.log(err);

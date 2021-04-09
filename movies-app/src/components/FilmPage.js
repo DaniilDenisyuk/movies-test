@@ -1,14 +1,14 @@
 import cn from "classnames";
 import { connect } from "react-redux";
 import FilmLI from "./FilmLI";
-import FilmForm from "./modals/FilmForm";
+import { FilmFormModal } from "./modals";
 
 import { useState, useEffect, useRef } from "react";
 
 import {
   fetchFilms,
   postFilm,
-  postFilms,
+  postFilmsFile,
   setOrder,
   setSorting,
 } from "../redux/actionCreators/films";
@@ -24,7 +24,7 @@ const filterByKey = (list, key, value) =>
   list.filter((li) => li[key].toUpperCase().includes(value.toUpperCase()));
 
 const sortByYear = (collection, order) => {
-  const mapped = collection.map((v, i) => ({ i, value: v.releaseYear }));
+  const mapped = collection.map((v, i) => ({ i, value: v.releaseyear }));
   mapped.sort((a, b) => {
     const result = a.value - b.value;
     return order === "ASC" ? result : -result;
@@ -35,7 +35,9 @@ const sortByYear = (collection, order) => {
 const sortByTitle = (collection, order) => {
   const mapped = collection.map((v, i) => ({ i, value: v.title }));
   mapped.sort((a, b) => {
-    const result = a.localeCompare(b, undefined, { sensitivity: "base" });
+    const result = a.value.localeCompare(b.value, undefined, {
+      sensitivity: "base",
+    });
     return order === "ASC" ? result : -result;
   });
   return mapped.map((v) => collection[v.i]);
@@ -71,7 +73,7 @@ const FilmPage = ({
     const reader = new FileReader();
     const fields = {
       title: "Title:",
-      releaseYear: "Release Year:",
+      releaseyear: "Release Year:",
       format: "Format:",
       stars: "Stars:",
     };
@@ -98,14 +100,13 @@ const FilmPage = ({
     });
   };
 
-  const handleSubmit = (title, releaseYear, format, stars) => {
-    postFilm({ title, releaseYear, format, stars });
+  const handleSubmit = (title, releaseyear, format, stars) => {
+    postFilm({ title, releaseyear, format, stars });
     setFormOpened(false);
   };
 
   const handleFileSubmit = async () => {
     try {
-      const films = await parseMoviesFile(fileChosen);
       postFilms(films);
       setFileChosen(null);
     } catch (e) {
@@ -173,7 +174,7 @@ const FilmPage = ({
       )}
       {formOpened && (
         <div ref={modalRef}>
-          <FilmForm
+          <FilmFormModal
             className="films__film-modal"
             handleClose={closeForm}
             handleSubmit={handleSubmit}
@@ -212,14 +213,14 @@ const FilmPage = ({
 
 const mapState = (state) => {
   const { sorting, order, list, isLoading } = state.films;
-  const films = sorting(list, order);
+  const films = sorting ? sorting(list, order) : list;
   return { films, order, sorting, isLoading };
 };
 
 const mapDispatch = {
   fetchFilms,
   postFilm,
-  postFilms,
+  postFilmsFile,
   setOrder,
   setSorting,
 };

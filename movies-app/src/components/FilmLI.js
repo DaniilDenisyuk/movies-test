@@ -10,7 +10,7 @@ const FilmLI = ({ className, film, removeFilm }) => {
   return (
     <li className={cn(className, "film-li")}>
       <h2 className="film-li__title">{film.title}</h2>
-      <h3 className="film-li__year">{film.releaseYear}</h3>
+      <h3 className="film-li__year">{film.releaseyear}</h3>
       <button className="film-li__info" onClick={() => setInfoOpened(true)}>
         Полная информация
       </button>
@@ -26,7 +26,10 @@ const FilmLI = ({ className, film, removeFilm }) => {
       {confirmOpened && (
         <ConfirmDeletionModal
           handleClose={() => setConfirmOpened(false)}
-          onConfirm={() => removeFilm(film.id)}
+          onConfirm={() => {
+            removeFilm(film.id);
+            setConfirmOpened(false);
+          }}
           onDecline={() => setConfirmOpened(false)}
         />
       )}
