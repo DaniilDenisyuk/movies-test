@@ -103,8 +103,8 @@ BEGIN
   INSERT INTO movie (title, releaseyear, format) VALUES ($1,$2,$3) RETURNING id INTO STRICT retMovieId;
   FOREACH actor IN ARRAY actors
   LOOP
-    actorName = string_to_array(actor, ' ');
-    SELECT insertIfActorIsNotExists(actorName[1], actorName[2]) INTO STRICT retActorId;
+    actorName = string_to_array(actor, '');
+    SELECT insertIfActorIsNotExists(actorName[1], COALESCE(actorName[2],' ')) INTO STRICT retActorId;
     INSERT INTO ActorMovie (movieId, actorId) VALUES (retMovieId, retActorId);
   END LOOP;
 RETURN retMovieId;
