@@ -62,9 +62,7 @@ const createFilm = (req, res) => {
 
 const uploadFilms = (req, res) => {
   const db = req.app.get("db");
-  console.log(req.file);
   const { path } = req.file;
-  console.log(req.file ? req.file : "no-file");
   readFile(path, { encoding: "utf-8" })
     .then((content) => parseMovies(content))
     .then((movies) => {
@@ -72,7 +70,7 @@ const uploadFilms = (req, res) => {
         movie: { title, releaseyear, format },
         actor: stars,
       }));
-      createBunch(db, bunch).then(() => {
+      return createBunch(db, bunch).then(() => {
         res.status(201).send({ message: "File succesfully uploaded" });
       });
     })

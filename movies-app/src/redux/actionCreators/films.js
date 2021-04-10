@@ -58,6 +58,7 @@ export const fetchFilms = () => (dispatch) => {
       }
     })
     .then((films) => {
+      dispatch(addMessage("Films fetched", 2));
       dispatch(addFilms(films));
     })
     .catch((error) => {

@@ -1,0 +1,16 @@
+.toast-message {
+  width: 300px;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid #bbbbbb;
+  margin-bottom: 10px;
+  &--error {
+    border-color: red;
+  }
+  &--info {
+    border-color: aqua;
+  }
+  &--success {
+    border-color: lightgreen;
+  }
+}

@@ -2,6 +2,9 @@ import cn from "classnames";
 import { connect } from "react-redux";
 import FilmLI from "./FilmLI";
 import { FilmFormModal } from "./modals";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./ToastMessage.scss";
 
 import { useState, useEffect, useRef } from "react";
 
@@ -51,6 +54,7 @@ const FilmPage = ({
   postFilmsFile,
   setOrder,
   setSorting,
+  message,
 }) => {
   const [fileChosen, setFileChosen] = useState(null);
   const [formOpened, setFormOpened] = useState(false);
@@ -62,6 +66,32 @@ const FilmPage = ({
   const filtFilms = filterFilms();
 
   const modalRef = useRef();
+  useEffect(() => {
+    const { text, type } = message;
+    if (!text) return;
+    let appearance = "";
+    switch (type) {
+      case 0:
+        appearance = "error";
+        break;
+      case 1:
+        appearance = "success";
+        break;
+      case 2:
+        appearance = "info";
+        break;
+      default:
+        appearance = "info";
+        break;
+    }
+    toast(text, {
+      className: cn("toast-message", {
+        "toast-message--error": appearance === "error",
+        "toast-message--success": appearance === "success",
+        "toast-message--info": appearance === "info",
+      }),
+    });
+  }, [message]);
 
   useEffect(() => {
     fetchFilms();
@@ -177,14 +207,15 @@ const FilmPage = ({
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
 
 const mapState = (state) => {
-  const { sorting, order, list, isLoading } = state.films;
+  const { sorting, order, list, isLoading, message } = state.films;
   const films = sorting ? sorting(list, order) : list;
-  return { films, order, sorting, isLoading };
+  return { films, order, sorting, isLoading, message };
 };
 
 const mapDispatch = {
