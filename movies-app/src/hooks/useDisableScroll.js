@@ -3,7 +3,7 @@ import { useEffect } from "react";
 export const useDisableScroll = () => {
   useEffect(() => {
     const keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
-
+    let supportsPassive = false;
     try {
       window.addEventListener(
         "test",
@@ -15,16 +15,13 @@ export const useDisableScroll = () => {
         })
       );
     } catch (e) {}
-    let supportsPassive = false;
 
     const wheelOpt = supportsPassive ? { passive: false } : false;
     const wheelEvent =
       "onwheel" in document.createElement("div") ? "wheel" : "mousewheel";
-
     const preventDefault = (e) => {
       e.preventDefault();
     };
-
     const preventDefaultForScrollKeys = (e) => {
       if (keys[e.keyCode]) {
         preventDefault(e);

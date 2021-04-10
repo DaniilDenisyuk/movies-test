@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION insertIfActorIsNotExists(firstName VARCHAR, lastName 
 DECLARE actorId INT;
 BEGIN
 SELECT
-  Id INTO STRICT actorId
+  Id INTO actorId
 FROM
   Actor
 WHERE
@@ -60,7 +60,7 @@ INSERT INTO
   Actor (FirstName, LastName)
 VALUES
   ($1, $2) RETURNING Id INTO STRICT actorId;
-ELSE RETURN Id;
+ELSE RETURN actorId;
 END IF;
 RETURN actorId;
 END;
@@ -74,16 +74,15 @@ WHERE
 RETURNING id;
 $$ LANGUAGE SQL;
 
-CREATE
-OR REPLACE FUNCTION allMovies() RETURNS TABLE(
+CREATE OR REPLACE FUNCTION allMovies() RETURNS TABLE(
   id int,
   title varchar,
   releaseyear varchar,
   format varchar,
   stars varchar
-) AS $ $
+) AS $$
 SELECT
-  m.*,
+  m.*,ert
   STRING_AGG(a.FirstName || ' ' || a.LastName, ', ') as stars
 FROM
   Movie AS m
@@ -93,5 +92,21 @@ GROUP BY
   m.Id
 ORDER BY
   m.Id;
+$$ LANGUAGE SQL;
 
-$ $ LANGUAGE SQL;
+CREATE OR REPLACE FUNCTION createMovie(title VARCHAR, year VARCHAR, format VARCHAR, actors VARCHAR[]) RETURNS INTEGER AS $$
+DECLARE retMovieId INT;
+DECLARE retActorId INT;
+DECLARE actor VARCHAR;
+DECLARE actorName VARCHAR[];
+BEGIN
+  INSERT INTO movie (title, releaseyear, format) VALUES ($1,$2,$3) RETURNING id INTO STRICT retMovieId;
+  FOREACH actor IN ARRAY actors
+  LOOP
+    actorName = string_to_array(actor, ' ');
+    SELECT insertIfActorIsNotExists(actorName[1], actorName[2]) INTO STRICT retActorId;
+    INSERT INTO ActorMovie (movieId, actorId) VALUES (retMovieId, retActorId);
+  END LOOP;
+RETURN retMovieId;
+END;
+$$ LANGUAGE plpgsql;

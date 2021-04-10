@@ -13,13 +13,6 @@ import {
   setSorting,
 } from "../redux/actionCreators/films";
 
-const FilmList = ({ className, films }) => {
-  const filmItems = films.map((film, i) => (
-    <FilmLI key={`film-item-${i}`} className="film-list__li" film={film} />
-  ));
-  return <ul className={cn(className, "film-list")}>{filmItems}</ul>;
-};
-
 const filterByKey = (list, key, value) =>
   list.filter((li) => li[key].toUpperCase().includes(value.toUpperCase()));
 
@@ -43,12 +36,19 @@ const sortByTitle = (collection, order) => {
   return mapped.map((v) => collection[v.i]);
 };
 
+const FilmList = ({ className, films }) => {
+  const filmItems = films.map((film, i) => (
+    <FilmLI key={`film-item-${i}`} className="film-list__li" film={film} />
+  ));
+  return <ul className={cn(className, "film-list")}>{filmItems}</ul>;
+};
+
 const FilmPage = ({
   films,
   isLoading,
   fetchFilms,
   postFilm,
-  postFilms,
+  postFilmsFile,
   setOrder,
   setSorting,
 }) => {
@@ -69,49 +69,14 @@ const FilmPage = ({
 
   const closeForm = () => setFormOpened(false);
 
-  const parseMoviesFile = (file) => {
-    const reader = new FileReader();
-    const fields = {
-      title: "Title:",
-      releaseyear: "Release Year:",
-      format: "Format:",
-      stars: "Stars:",
-    };
-    return new Promise((resolve, reject) => {
-      reader.readAsText(file);
-      reader.onload = function () {
-        const content = reader.result;
-        const films = content.split("\n\n").map(async (filmStr) => {
-          const film = {};
-          const filmFields = filmStr.split("\n");
-          for (const [key, str] of Object.entries(fields)) {
-            filmFields.forEach((field) => {
-              if (field.startsWith(str)) {
-                film[key] = field.replace(str, "").trim();
-              }
-            });
-          }
-          return film;
-        });
-        Promise.all(films)
-          .then((films) => resolve(films))
-          .catch((e) => reject(e));
-      };
-    });
-  };
-
   const handleSubmit = (title, releaseyear, format, stars) => {
     postFilm({ title, releaseyear, format, stars });
     setFormOpened(false);
   };
 
-  const handleFileSubmit = async () => {
-    try {
-      postFilms(films);
-      setFileChosen(null);
-    } catch (e) {
-      console.log(e);
-    }
+  const handleFileSubmit = () => {
+    postFilmsFile(fileChosen);
+    setFileChosen(null);
   };
 
   return (
@@ -192,7 +157,12 @@ const FilmPage = ({
               type="file"
               accept=".txt"
               onChange={(e) => {
-                setFileChosen(e.target.files[0]);
+                const file = e.target.files[0];
+                if (file.size === 0) {
+                  alert("Файл не может быть пустым");
+                } else {
+                  setFileChosen(e.target.files[0]);
+                }
               }}
             />
             Загрузить фильмы с файла
@@ -200,7 +170,7 @@ const FilmPage = ({
           {fileChosen && (
             <div className="row films__submit-file">
               <p>{fileChosen.name}</p>
-              <button type="submit" onClick={() => handleFileSubmit()}>
+              <button type="submit" onClick={handleFileSubmit}>
                 Подтвердить
               </button>
             </div>

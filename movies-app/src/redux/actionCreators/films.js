@@ -43,13 +43,12 @@ export const setOrder = (order) => ({
 export const fetchFilms = () => (dispatch) => {
   dispatch(filmsLoading());
   const Url = new URL(FILMS_URI, API_URL);
-  console.log(Url);
   return fetch(Url)
     .then((response) => {
       if (response.ok) {
         return response.json();
       } else {
-        response.json().then((body) => {
+        return response.json().then((body) => {
           let error = body.error;
           if (!error) {
             error = "Error " + response.status + ": " + response.statusText;
@@ -59,7 +58,6 @@ export const fetchFilms = () => (dispatch) => {
       }
     })
     .then((films) => {
-      console.log(films);
       dispatch(addFilms(films));
     })
     .catch((error) => {
@@ -82,7 +80,7 @@ export const postFilm = (film) => (dispatch) => {
       if (response.ok) {
         return response.json();
       } else {
-        response.json().then((body) => {
+        return response.json().then((body) => {
           let error = body.error;
           if (!error) {
             error = "Error " + response.status + ": " + response.statusText;
@@ -107,20 +105,19 @@ export const postFilmsFile = (file) => (dispatch) => {
   return fetch(Url, {
     method: "POST",
     body: formData,
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
     credentials: "same-origin",
   })
     .then((response) => {
       if (response.ok) {
-        return response.json();
+        return response;
       } else {
-        let errorMess = response.json().error;
-        if (!errorMess) {
-          errorMess = "Error " + response.status + ": " + response.statusText;
-        }
-        throw new Error(errorMess);
+        return response.json().then((body) => {
+          let error = body.error;
+          if (!error) {
+            error = "Error " + response.status + ": " + response.statusText;
+          }
+          throw new Error(error);
+        });
       }
     })
     .then(() => {
@@ -128,8 +125,9 @@ export const postFilmsFile = (file) => (dispatch) => {
       dispatch(addMessage("Your file succesfully posted", 1));
     })
     .catch((error) => {
+      console.log(error);
       dispatch(
-        addMessage("Your file could) not be posted\nError: " + error.message, 0)
+        addMessage("Your file could not be posted\nError: " + error.message, 0)
       );
     });
 };
@@ -147,7 +145,7 @@ export const removeFilm = (id) => (dispatch) => {
       if (response.ok) {
         return response.json();
       } else {
-        response.json().then((body) => {
+        return response.json().then((body) => {
           let error = body.error;
           if (!error) {
             error = "Error " + response.status + ": " + response.statusText;
@@ -157,7 +155,6 @@ export const removeFilm = (id) => (dispatch) => {
       }
     })
     .then(({ message, id }) => {
-      console.log(id);
       dispatch(deleteFilm(id));
       dispatch(addMessage(message, 1));
     })

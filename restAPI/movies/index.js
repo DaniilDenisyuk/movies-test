@@ -48,24 +48,24 @@ const getAllFilms = (req, res) => {
 
 const createFilm = (req, res) => {
   const db = req.app.get("db");
-  const film = req.body;
-  create(db, film)
+  const { title, format, releaseyear, stars } = req.body;
+  const movie = { movie: { title, releaseyear, format }, actor: stars };
+  create(db, movie)
     .then((insertedId) => {
-      res.send({
-        message: "File succesfully uploaded",
-        id: insertedId,
-      });
+      res.send(insertedId);
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ error: "Cannot create film" + err.message });
+      res.status(500).json({ error: "Cannot create film " + err.message });
     });
 };
 
 const uploadFilms = (req, res) => {
   const db = req.app.get("db");
-  const { encoding, path } = req.file.path;
-  readFile(path, { encoding })
+  console.log(req.file);
+  const { path } = req.file;
+  console.log(req.file ? req.file : "no-file");
+  readFile(path, { encoding: "utf-8" })
     .then((content) => parseMovies(content))
     .then((movies) => {
       const bunch = movies.map(({ title, releaseyear, format, stars }) => ({

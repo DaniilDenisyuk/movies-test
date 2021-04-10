@@ -1,12 +1,9 @@
-import { parseRecord } from "../utils/index.js";
-// {movie: { title, releaseyear, format, actors}}
-
-export const createBunch = (dbPool, movies) => {
-  const bunch = movies.map((movie) => {
-    const actors = parseRecord();
-    const { data, fields, params } = parseRecord(movie);
+export const createBunch = (db, movies) => {
+  let sqlString = "";
+  movies.forEach(({ movie, actor }) => {
+    sqlString += `SELECT createMovie('${movie.title}','${movie.format}','${
+      movie.releaseyear
+    }','{${actor.toString()}}');`;
   });
-
-  const sql = `BEGIN; ${bunch} COMMIT;`;
-  return db.select("movie").then((data) => data.rows);
+  return db.query(sqlString).then((data) => data.rows);
 };
