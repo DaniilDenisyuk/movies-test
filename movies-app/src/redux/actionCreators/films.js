@@ -95,7 +95,9 @@ export const postFilm = (film) => (dispatch) => {
       dispatch(addFilm({ ...film, id }));
     })
     .catch((error) => {
-      addMessage("Your film could not be posted\nError: " + error.message, 0);
+      dispatch(
+        addMessage("Your film could not be posted\nError: " + error.message, 0)
+      );
     });
 };
 

@@ -2,15 +2,15 @@
   width: 300px;
   padding: 10px;
   border-radius: 7px;
-  border: 1px solid #bbbbbb;
+  border: 2px solid #bbbbbb;
   margin-bottom: 10px;
   &--error {
     border-color: red;
   }
   &--info {
-    border-color: aqua;
+    border-color: blue;
   }
   &--success {
-    border-color: lightgreen;
+    border-color: green;
   }
 }
