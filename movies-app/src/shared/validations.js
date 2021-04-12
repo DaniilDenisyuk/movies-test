@@ -1,5 +1,4 @@
-export const required = (value) =>
-  typeof value === "string" ? !!value.trim() : !!value;
+export const required = (value) => !!value.toString();
 
 export const number = (value, errMess) =>
   value && isNaN(Number(value)) ? false : true;

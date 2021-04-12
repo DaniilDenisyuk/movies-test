@@ -82,8 +82,7 @@ CREATE OR REPLACE FUNCTION allMovies() RETURNS TABLE(
   stars varchar
 ) AS $$
 SELECT
-  m.*,ert
-  STRING_AGG(a.FirstName || ' ' || a.LastName, ', ') as stars
+  m.*, STRING_AGG(a.FirstName || ' ' || a.LastName, ', ') as stars
 FROM
   Movie AS m
   INNER JOIN ActorMovie AS am ON m.Id = am.movieId
@@ -94,7 +93,7 @@ ORDER BY
   m.Id;
 $$ LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION createMovie(title VARCHAR, year VARCHAR, format VARCHAR, actors VARCHAR[]) RETURNS INTEGER AS $$
+CREATE OR REPLACE FUNCTION createMovie(title VARCHAR, year SMALLINT, format VARCHAR, actors VARCHAR[]) RETURNS INTEGER AS $$
 DECLARE retMovieId INT;
 DECLARE retActorId INT;
 DECLARE actor VARCHAR;
